@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  http: ^0.12.0+2
   flutter:
     sdk: flutter
 
@@ -56,10 +57,28 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: HeptaSlab-Bold
+      fonts:
+        - asset: fonts/HeptaSlab-Bold.ttf
+    - family: HeptaSlab-ExtraBold
+      fonts:
+        - asset: fonts/HeptaSlab-ExtraBold.ttf
+    - family: HeptaSlab-Regular
+      fonts:
+        - asset: fonts/HeptaSlab-Regular.ttf
+    - family: HeptaSlab-SemiBold
+      fonts:
+        - asset: fonts/HeptaSlab-SemiBold.ttf
+    - family: HeptaSlab-Thin
+      fonts:
+        - asset: fonts/HeptaSlab-Thin.ttf
+    - family: LiuJianMaoCao-Regular
+      fonts:
+        - asset: fonts/LiuJianMaoCao-Regular.ttf
+    - family: LongCang-Regular
+      fonts:
+        - asset: fonts/LongCang-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
