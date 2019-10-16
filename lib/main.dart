@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'quotes_class.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -30,48 +31,59 @@ class _QuotesScreenState extends State<QuotesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-        child: Column(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          child: Column(
 //          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Text(
-                defaultQ,
-                style: TextStyle(fontSize: 21, fontFamily: 'HeptaSlab-Regular'),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Text(
-                defaultA,
-                style: TextStyle(
-                    color: Colors.red,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 16),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: FloatingActionButton(
-                backgroundColor: Colors.white,
-                child: Icon(
-                  Icons.arrow_forward,
-                  color: Colors.red,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                flex: 5,
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 15),
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    defaultQ,
+                    style: TextStyle(
+                        fontSize: 21, fontFamily: 'HeptaSlab-Regular'),
+                  ),
                 ),
-                onPressed: () async {
-                  Map qMap = await fetchQuotes();
-                  print(qMap['quote']['body']);
-                  defaultA = qMap['quote']['author'];
-                  defaultQ = qMap['quote']['body'];
-                  setState(() {});
-                },
               ),
-            )
-          ],
+              Expanded(
+                flex: 1,
+                child: Text(
+                  defaultA,
+                  style: TextStyle(
+                      color: Colors.red,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Container(
+                  alignment: Alignment.topLeft,
+                  child: FloatingActionButton(
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.arrow_forward,
+                      color: Colors.red,
+                      size: 21,
+                    ),
+                    onPressed: () async {
+                      Map qMap = await fetchQuotes();
+
+                      defaultA = qMap['quote']['author'];
+                      defaultQ = qMap['quote']['body'];
+                      setState(() {});
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
