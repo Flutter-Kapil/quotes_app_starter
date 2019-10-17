@@ -26,8 +26,27 @@ class _QuotesScreenState extends State<QuotesScreen> {
     return aQuoteMap;
   }
 
-  String defaultQ = "Quote HERE";
-  String defaultA = "Author HERE";
+  String defaultQ = "Fething Quotes";
+  String defaultA = "You are awesome";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchQuotes();
+    initialQuote();
+  }
+
+  void initialQuote() async {
+    print('entered initialQuote function');
+    Map initialMap = await fetchQuotes();
+    print('initialMap obtained');
+    defaultA = initialMap['quote']['author'];
+    defaultQ = initialMap['quote']['body'];
+    print(' initial auth $defaultA');
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
