@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
-import 'quotes_class.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -26,6 +25,8 @@ class _QuotesScreenState extends State<QuotesScreen> {
     return aQuoteMap;
   }
 
+  bool fetchingQuotes = false;
+
   String defaultQ = "Fething Quotes";
   String defaultA = "You are awesome";
 
@@ -39,8 +40,10 @@ class _QuotesScreenState extends State<QuotesScreen> {
 
   void initialQuote() async {
     print('entered initialQuote function');
+    fetchingQuotes = true;
     Map initialMap = await fetchQuotes();
     print('initialMap obtained');
+    fetchingQuotes = false;
     defaultA = initialMap['quote']['author'];
     defaultQ = initialMap['quote']['body'];
     print(' initial auth $defaultA');
@@ -86,16 +89,24 @@ class _QuotesScreenState extends State<QuotesScreen> {
                   alignment: Alignment.topLeft,
                   child: FloatingActionButton(
                     backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.arrow_forward,
-                      color: Colors.red,
-                      size: 21,
-                    ),
+                    child: fetchingQuotes
+                        ? CircularProgressIndicator(
+                            strokeWidth: 3.0,
+                            backgroundColor: Colors.red,
+                          )
+                        : Icon(
+                            Icons.arrow_forward,
+                            color: Colors.red,
+                            size: 21,
+                          ),
                     onPressed: () async {
+                      fetchingQuotes = true;
+                      setState(() {});
                       Map qMap = await fetchQuotes();
 
                       defaultA = qMap['quote']['author'];
                       defaultQ = qMap['quote']['body'];
+                      fetchingQuotes = false;
                       setState(() {});
                     },
                   ),
