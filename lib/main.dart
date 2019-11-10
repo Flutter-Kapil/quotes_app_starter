@@ -4,6 +4,7 @@ import 'dart:convert';
 
 void main() {
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: QuotesScreen(),
   ));
 }
@@ -50,69 +51,145 @@ class _QuotesScreenState extends State<QuotesScreen> {
     setState(() {});
   }
 
+  bool usingDarkTheme = false;
+  bool usingAnimation = false;
+  List<bool> toggleButtons = [true, false, false];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+    return MaterialApp(
+      theme: ThemeData(
+          brightness: Brightness.dark,
+          floatingActionButtonTheme:
+              FloatingActionButtonThemeData(backgroundColor: Colors.orange)),
+      home: Scaffold(
+        drawer: Container(
+          color: Colors.grey,
+          height: double.infinity,
+          width: MediaQuery.of(context).size.width * 0.45,
           child: Column(
-//          crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Expanded(
-                flex: 5,
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 15),
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    defaultQ,
-                    style: TextStyle(
-                        fontSize: 21, fontFamily: 'HeptaSlab-Regular'),
-                  ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.2,
+              ),
+              Container(
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black26)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Text('Dark Theme'),
+                    Switch(
+                      value: usingDarkTheme,
+                      onChanged: (value) {
+                        value = !usingDarkTheme;
+                        usingDarkTheme = !usingDarkTheme;
+                        setState(() {});
+                      },
+                    ),
+                  ],
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  defaultA,
-                  style: TextStyle(
-                      color: Colors.red,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 16),
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Container(
-                  alignment: Alignment.topLeft,
-                  child: FloatingActionButton(
-                    backgroundColor: Colors.white,
-                    child: fetchingQuotes
-                        ? CircularProgressIndicator(
-                            strokeWidth: 3.0,
-                            backgroundColor: Colors.red,
-                          )
-                        : Icon(
-                            Icons.arrow_forward,
-                            color: Colors.red,
-                            size: 21,
-                          ),
-                    onPressed: () async {
-                      fetchingQuotes = true;
-                      setState(() {});
-                      Map qMap = await fetchQuotes();
+              Container(
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black26)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Text('Animation'),
+                    Switch(
+                      value: usingAnimation,
+                      onChanged: (value2) {
+//                      print(value);
 
-                      defaultA = qMap['quote']['author'];
-                      defaultQ = qMap['quote']['body'];
-                      fetchingQuotes = false;
-                      setState(() {});
-                    },
+                        usingAnimation = !usingAnimation;
+                        setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              ToggleButtons(
+                highlightColor: Colors.orange,
+                onPressed: (int x) {
+                  for (int index = 0; index < toggleButtons.length; index++) {
+                    if (index != x)
+                      toggleButtons[index] = false;
+                    else
+                      toggleButtons[index] = true;
+                  }
+                  setState(() {});
+                },
+                isSelected: toggleButtons,
+                children: <Widget>[
+                  Text('1'),
+                  Text('2'),
+                  Text('3'),
+                ],
+              ),
+            ],
+          ),
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Column(
+//          crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  flex: 5,
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 15),
+                    alignment: Alignment.bottomLeft,
+                    child: Text(
+                      defaultQ,
+                      style: TextStyle(
+                          fontSize: 21, fontFamily: 'HeptaSlab-Regular'),
+                    ),
                   ),
                 ),
-              )
-            ],
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    defaultA,
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 16),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Container(
+                    alignment: Alignment.topLeft,
+                    child: FloatingActionButton(
+                      backgroundColor: Colors.white,
+                      child: fetchingQuotes && usingAnimation
+                          ? CircularProgressIndicator(
+                              strokeWidth: 3.0,
+                              backgroundColor: Colors.red,
+                            )
+                          : Icon(
+                              Icons.arrow_forward,
+                              color: Colors.red,
+                              size: 21,
+                            ),
+                      onPressed: () async {
+                        fetchingQuotes = true;
+                        setState(() {});
+                        Map qMap = await fetchQuotes();
+
+                        defaultA = qMap['quote']['author'];
+                        defaultQ = qMap['quote']['body'];
+                        fetchingQuotes = false;
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
