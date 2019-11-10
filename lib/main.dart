@@ -75,7 +75,7 @@ class _QuotesScreenState extends State<QuotesScreen>
               FloatingActionButtonThemeData(backgroundColor: Colors.black26)),
       home: Scaffold(
         drawer: Container(
-          color: Colors.grey,
+          color: usingDarkTheme ? Colors.black : Colors.grey,
           height: double.infinity,
           width: MediaQuery.of(context).size.width * 0.45,
           child: Column(
@@ -182,6 +182,8 @@ class _QuotesScreenState extends State<QuotesScreen>
                   child: Container(
                     alignment: Alignment.topLeft,
                     child: FloatingActionButton(
+                      backgroundColor:
+                          usingDarkTheme ? Colors.black : Colors.white,
                       child: fetchingQuotes && usingAnimation
                           ? CircularProgressIndicator(
                               strokeWidth: 3.0,
