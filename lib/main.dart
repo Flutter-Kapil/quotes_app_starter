@@ -33,7 +33,7 @@ class _QuotesScreenState extends State<QuotesScreen>
   String defaultA = "You are awesome";
 
   bool usingDarkTheme = false;
-  bool usingAnimation = false;
+  bool usingAnimation = true;
   List<bool> toggleButtons = [true, false, false];
   AnimationController _controller;
   Animation _animation;
@@ -41,9 +41,12 @@ class _QuotesScreenState extends State<QuotesScreen>
   @override
   void initState() {
     _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-    _animation = Tween(begin: 1.0, end: 0.2).animate(_controller);
-//    _controller.forward();
+        AnimationController(vsync: this, duration: Duration(milliseconds: 900));
+    _animation =
+        Tween(begin: usingAnimation ? 0.2 : 1.0, end: 1.0).animate(_controller);
+    CurvedAnimation _smoothAnimation =
+        CurvedAnimation(parent: _controller, curve: Curves.bounceOut);
+    _controller.forward();
     // TODO: implement initState
     super.initState();
     fetchQuotes();
@@ -59,6 +62,7 @@ class _QuotesScreenState extends State<QuotesScreen>
     defaultA = initialMap['quote']['author'];
     defaultQ = initialMap['quote']['body'];
     print(' initial auth $defaultA');
+//    _controller.reverse();
     setState(() {});
   }
 
@@ -162,12 +166,15 @@ class _QuotesScreenState extends State<QuotesScreen>
                 ),
                 Expanded(
                   flex: 1,
-                  child: Text(
-                    defaultA,
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontStyle: FontStyle.italic,
-                        fontSize: 16),
+                  child: FadeTransition(
+                    opacity: _animation,
+                    child: Text(
+                      defaultA,
+                      style: TextStyle(
+                          color: Colors.red,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 16),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -187,13 +194,15 @@ class _QuotesScreenState extends State<QuotesScreen>
                             ),
                       onPressed: () async {
                         fetchingQuotes = true;
+                        usingAnimation ? _controller.reverse() : null;
                         setState(() {});
                         Map qMap = await fetchQuotes();
-
                         defaultA = qMap['quote']['author'];
                         defaultQ = qMap['quote']['body'];
+//                        _controller.forward();
+                        usingAnimation ? _controller.forward() : null;
                         fetchingQuotes = false;
-                        _controller.forward();
+//                        _controller.forward();
                         setState(() {});
                       },
                     ),
