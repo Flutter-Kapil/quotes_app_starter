@@ -14,7 +14,8 @@ class QuotesScreen extends StatefulWidget {
   _QuotesScreenState createState() => _QuotesScreenState();
 }
 
-class _QuotesScreenState extends State<QuotesScreen> {
+class _QuotesScreenState extends State<QuotesScreen>
+    with SingleTickerProviderStateMixin {
   //fetch quotes function
   Future<Map> fetchQuotes() async {
     Response response = await get('https://favqs.com/api/qotd');
@@ -31,8 +32,18 @@ class _QuotesScreenState extends State<QuotesScreen> {
   String defaultQ = "Fething Quotes";
   String defaultA = "You are awesome";
 
+  bool usingDarkTheme = false;
+  bool usingAnimation = false;
+  List<bool> toggleButtons = [true, false, false];
+  AnimationController _controller;
+  Animation _animation;
+
   @override
   void initState() {
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    _animation = Tween(begin: 1.0, end: 0.2).animate(_controller);
+//    _controller.forward();
     // TODO: implement initState
     super.initState();
     fetchQuotes();
@@ -51,16 +62,13 @@ class _QuotesScreenState extends State<QuotesScreen> {
     setState(() {});
   }
 
-  bool usingDarkTheme = false;
-  bool usingAnimation = false;
-  List<bool> toggleButtons = [true, false, false];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-          brightness: Brightness.dark,
+          brightness: usingDarkTheme ? Brightness.dark : Brightness.light,
           floatingActionButtonTheme:
-              FloatingActionButtonThemeData(backgroundColor: Colors.orange)),
+              FloatingActionButtonThemeData(backgroundColor: Colors.black26)),
       home: Scaffold(
         drawer: Container(
           color: Colors.grey,
@@ -139,13 +147,16 @@ class _QuotesScreenState extends State<QuotesScreen> {
               children: <Widget>[
                 Expanded(
                   flex: 5,
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 15),
-                    alignment: Alignment.bottomLeft,
-                    child: Text(
-                      defaultQ,
-                      style: TextStyle(
-                          fontSize: 21, fontFamily: 'HeptaSlab-Regular'),
+                  child: FadeTransition(
+                    opacity: _animation,
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 15),
+                      alignment: Alignment.bottomLeft,
+                      child: Text(
+                        defaultQ,
+                        style: TextStyle(
+                            fontSize: 21, fontFamily: 'HeptaSlab-Regular'),
+                      ),
                     ),
                   ),
                 ),
@@ -164,7 +175,6 @@ class _QuotesScreenState extends State<QuotesScreen> {
                   child: Container(
                     alignment: Alignment.topLeft,
                     child: FloatingActionButton(
-                      backgroundColor: Colors.white,
                       child: fetchingQuotes && usingAnimation
                           ? CircularProgressIndicator(
                               strokeWidth: 3.0,
@@ -183,6 +193,7 @@ class _QuotesScreenState extends State<QuotesScreen> {
                         defaultA = qMap['quote']['author'];
                         defaultQ = qMap['quote']['body'];
                         fetchingQuotes = false;
+                        _controller.forward();
                         setState(() {});
                       },
                     ),
