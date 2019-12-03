@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:share/share.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -44,8 +45,6 @@ class _QuotesScreenState extends State<QuotesScreen>
         AnimationController(vsync: this, duration: Duration(milliseconds: 900));
     _animation =
         Tween(begin: usingAnimation ? 0.2 : 1.0, end: 1.0).animate(_controller);
-    CurvedAnimation _smoothAnimation =
-        CurvedAnimation(parent: _controller, curve: Curves.bounceOut);
     _controller.forward();
     // TODO: implement initState
     super.initState();
@@ -69,6 +68,7 @@ class _QuotesScreenState extends State<QuotesScreen>
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           brightness: usingDarkTheme ? Brightness.dark : Brightness.light,
           floatingActionButtonTheme:
@@ -126,14 +126,12 @@ class _QuotesScreenState extends State<QuotesScreen>
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-            child: Column(
-//          crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  flex: 5,
-                  child: FadeTransition(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  FadeTransition(
                     opacity: _animation,
                     child: Container(
                       margin: EdgeInsets.only(bottom: 15),
@@ -145,56 +143,58 @@ class _QuotesScreenState extends State<QuotesScreen>
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: FadeTransition(
+                  FadeTransition(
                     opacity: _animation,
-                    child: Text(
-                      defaultA,
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 16),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Container(
-                    alignment: Alignment.topLeft,
-                    child: FloatingActionButton(
-                      backgroundColor:
-                          usingDarkTheme ? Colors.black : Colors.white,
-                      child: fetchingQuotes && usingAnimation
-                          ? CircularProgressIndicator(
-                              strokeWidth: 3.0,
-                              backgroundColor: Colors.red,
-                            )
-                          : Icon(
-                              Icons.arrow_forward,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          defaultA,
+                          style: TextStyle(
                               color: Colors.red,
-                              size: 21,
-                            ),
-                      onPressed: () async {
-                        fetchingQuotes = true;
-                        usingAnimation ? _controller.reverse() : null;
-                        setState(() {});
-                        Map qMap = await fetchQuotes();
-                        defaultA = qMap['quote']['author'];
-                        defaultQ = qMap['quote']['body'];
-//                        _controller.forward();
-                        usingAnimation ? _controller.forward() : null;
-                        fetchingQuotes = false;
-//                        _controller.forward();
-                        setState(() {});
-                      },
+                              fontStyle: FontStyle.italic,
+                              fontSize: 16),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.share),
+                          onPressed: () {
+                            Share.share('$defaultQ \n -by $defaultA',
+                                subject: 'Interesting Quote that i found');
+                          },
+                        )
+                      ],
                     ),
                   ),
-                )
-              ],
+                ],
+              ),
             ),
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: usingDarkTheme ? Colors.black : Colors.white,
+          child: fetchingQuotes && usingAnimation
+              ? CircularProgressIndicator(
+                  strokeWidth: 3.0,
+                  backgroundColor: Colors.red,
+                )
+              : Icon(
+                  Icons.arrow_forward,
+                  color: Colors.red,
+                  size: 21,
+                ),
+          onPressed: () async {
+            fetchingQuotes = true;
+            usingAnimation ? _controller.reverse() : null;
+            setState(() {});
+            Map qMap = await fetchQuotes();
+            defaultA = qMap['quote']['author'];
+            defaultQ = qMap['quote']['body'];
+//                        _controller.forward();
+            usingAnimation ? _controller.forward() : null;
+            fetchingQuotes = false;
+//                        _controller.forward();
+            setState(() {});
+          },
         ),
       ),
     );
