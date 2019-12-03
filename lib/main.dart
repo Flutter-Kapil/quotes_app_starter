@@ -120,24 +120,6 @@ class _QuotesScreenState extends State<QuotesScreen>
                   ],
                 ),
               ),
-              ToggleButtons(
-                highlightColor: Colors.orange,
-                onPressed: (int x) {
-                  for (int index = 0; index < toggleButtons.length; index++) {
-                    if (index != x)
-                      toggleButtons[index] = false;
-                    else
-                      toggleButtons[index] = true;
-                  }
-                  setState(() {});
-                },
-                isSelected: toggleButtons,
-                children: <Widget>[
-                  Text('1'),
-                  Text('2'),
-                  Text('3'),
-                ],
-              ),
             ],
           ),
         ),
